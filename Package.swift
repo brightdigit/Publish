@@ -23,15 +23,15 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/brightdigit/Ink.git",
-            branch: "brightdigit-com-260406"
+            branch: "v1.0.0"
         ),
         .package(
             url: "https://github.com/brightdigit/Plot.git",
-            branch: "brightdigit-com-260406"
+            branch: "v1.0.0"
         ),
         .package(
             url: "https://github.com/brightdigit/Files.git",
-            branch: "brightdigit-com-260406"
+            branch: "v1.0.0"
         )
     ],
     targets: [
