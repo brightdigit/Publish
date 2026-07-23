@@ -82,7 +82,7 @@ fi
 
 # header.sh rewrites file headers in place, so it only runs locally — never in CI.
 if [ -z "$CI" ]; then
-	$PACKAGE_DIR/Scripts/header.sh -d $PACKAGE_DIR/Sources -c "Leo Dion" -o "BrightDigit" -p "Publish"
+	$PACKAGE_DIR/Scripts/header.sh -d $PACKAGE_DIR/Sources -c "John Sundell" -o "John Sundell" -p "Publish" -y 2021
 fi
 
 if [ -z "$CI" ]; then

@@ -2,6 +2,8 @@
     <img src="Logo.png" width="400" max-width="90%" alt="Publish" />
 </p>
 
+> **Fork notice:** This is a BrightDigit fork of [Publish](https://github.com/JohnSundell/Publish) by John Sundell, maintained for the BrightDigit site toolchain. Original work © 2019 John Sundell; modifications © 2026 BrightDigit. Distributed under the original MIT License — see LICENSE and NOTICE.
+
 <p align="center">
     <img src="https://img.shields.io/badge/Swift-5.5-orange.svg" />
     <a href="https://swift.org/package-manager">
