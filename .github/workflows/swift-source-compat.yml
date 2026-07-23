@@ -6,7 +6,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-
 jobs:
   swift-source-compat-suite:
     name: Test Swift ${{ matrix.container }} For Source Compatibility Suite

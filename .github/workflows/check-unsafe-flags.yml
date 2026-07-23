@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-
 jobs:
   dump-package-check:
     name: Dump Swift package (authoritative) and scan JSON
