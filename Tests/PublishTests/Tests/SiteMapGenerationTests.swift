@@ -9,10 +9,10 @@ import Publish
 import XCTest
 
 internal final class SiteMapGenerationTests: PublishTestCase {
-  internal func testGeneratingSiteMap() throws {
+  internal func testGeneratingSiteMap() async throws {
     let folder = try Folder.createTemporary()
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .addItem(.stub(withPath: "item")),
@@ -35,10 +35,10 @@ internal final class SiteMapGenerationTests: PublishTestCase {
     }
   }
 
-  internal func testExcludingPathsFromSiteMap() throws {
+  internal func testExcludingPathsFromSiteMap() async throws {
     let folder = try Folder.createTemporary()
 
-    let site = try publishWebsite(
+    let site = try await publishWebsite(
       in: folder,
       using: [
         .addItem(.stub(withPath: "itemA")),

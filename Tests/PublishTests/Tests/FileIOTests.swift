@@ -9,11 +9,11 @@ import Publish
 import XCTest
 
 internal final class FileIOTests: PublishTestCase {
-  internal func testCopyingFile() throws {
+  internal func testCopyingFile() async throws {
     let folder = try Folder.createTemporary()
     try folder.createFile(named: "File").write("Hello, world!")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .copyFile(at: "File")
@@ -24,11 +24,11 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertEqual(try file.readAsString(), "Hello, world!")
   }
 
-  internal func testCopyingFileToSpecificFolder() throws {
+  internal func testCopyingFileToSpecificFolder() async throws {
     let folder = try Folder.createTemporary()
     try folder.createFile(named: "File").write("Hello, world!")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .copyFile(at: "File", to: "Custom/Path")
@@ -39,11 +39,11 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertEqual(try file.readAsString(), "Hello, world!")
   }
 
-  internal func testCopyingFolder() throws {
+  internal func testCopyingFolder() async throws {
     let folder = try Folder.createTemporary()
     try folder.createSubfolder(named: "Subfolder")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .step(named: "Copy custom folder") { context in
@@ -55,14 +55,14 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertNotNil(try? folder.subfolder(at: "Output/Subfolder"))
   }
 
-  internal func testCopyingResourcesWithFolder() throws {
+  internal func testCopyingResourcesWithFolder() async throws {
     let folder = try Folder.createTemporary()
     let resourcesFolder = try folder.createSubfolder(named: "Resources")
     try resourcesFolder.createFile(named: "File").write("Hello")
     let nestedFolder = try resourcesFolder.createSubfolder(named: "Subfolder")
     try nestedFolder.createFile(named: "Nested").write("World!")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .copyResources(includingFolder: true)
@@ -75,14 +75,14 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertEqual(try nestedFile.readAsString(), "World!")
   }
 
-  internal func testCopyingResourcesWithoutFolder() throws {
+  internal func testCopyingResourcesWithoutFolder() async throws {
     let folder = try Folder.createTemporary()
     let resourcesFolder = try folder.createSubfolder(named: "Resources")
     try resourcesFolder.createFile(named: "File").write("Hello")
     let nestedFolder = try resourcesFolder.createSubfolder(named: "Subfolder")
     try nestedFolder.createFile(named: "Nested").write("World!")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .copyResources()
@@ -95,10 +95,10 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertEqual(try nestedFile.readAsString(), "World!")
   }
 
-  internal func testCreatingRootLevelFolder() throws {
+  internal func testCreatingRootLevelFolder() async throws {
     let folder = try Folder.createTemporary()
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .step(named: "Create folder") { context in
@@ -112,11 +112,11 @@ internal final class FileIOTests: PublishTestCase {
     XCTAssertNotNil(try? folder.file(at: "B/file"))
   }
 
-  internal func testCleaningHiddenFilesInOutputFolder() throws {
+  internal func testCleaningHiddenFilesInOutputFolder() async throws {
     let folder = try Folder.createTemporary()
     try folder.createFile(at: "Output/.hidden")
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .step(named: "Do nothing") { _ in }

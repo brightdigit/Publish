@@ -8,8 +8,8 @@ import Publish
 import XCTest
 
 extension ContentMutationTests {
-  internal func testMutatingPage() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingPage() async throws {
+    let site = try await publishWebsite(using: [
       .addPage(.stub(withPath: "a")),
       .mutatePage(
         at: "a",
@@ -22,8 +22,8 @@ extension ContentMutationTests {
     XCTAssertEqual(site.pages["a"]?.title, "A: Mutated")
   }
 
-  internal func testMutatingPageByChangingPath() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingPageByChangingPath() async throws {
+    let site = try await publishWebsite(using: [
       .addPage(.stub(withPath: "a")),
       .mutatePage(
         at: "a",
@@ -37,8 +37,8 @@ extension ContentMutationTests {
     XCTAssertNotNil(site.pages["b"])
   }
 
-  internal func testMutatingAllPagesMatchingPredicate() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingAllPagesMatchingPredicate() async throws {
+    let site = try await publishWebsite(using: [
       .addPages(in: [
         .stub(withPath: "a"),
         .stub(withPath: "b"),

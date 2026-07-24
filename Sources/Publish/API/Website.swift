@@ -4,10 +4,8 @@
 *  MIT license, see LICENSE file for details
 */
 
-import Dispatch
 import Foundation
 import Plot
-import Synchronization
 
 /// Protocol used to define a Publish-based website.
 /// You conform to this protocol using a custom type, which is then used to

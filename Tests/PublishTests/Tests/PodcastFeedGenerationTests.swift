@@ -9,10 +9,10 @@ import Publish
 import XCTest
 
 internal final class PodcastFeedGenerationTests: PublishTestCase {
-  internal func testOnlyIncludingSpecifiedSection() throws {
+  internal func testOnlyIncludingSpecifiedSection() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/a.md": """
@@ -28,10 +28,10 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
     XCTAssertFalse(feed.contains("Not included"))
   }
 
-  internal func testOnlyIncludingItemsMatchingPredicate() throws {
+  internal func testOnlyIncludingItemsMatchingPredicate() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       itemPredicate: \.path == "one/a",
       content: [
@@ -48,10 +48,10 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
     XCTAssertFalse(feed.contains("Not included"))
   }
 
-  internal func testConvertingRelativeLinksToAbsolute() throws {
+  internal func testConvertingRelativeLinksToAbsolute() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -74,7 +74,7 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testItemPrefixAndSuffix() throws {
+  internal func testItemPrefixAndSuffix() async throws {
     let folder = try Folder.createTemporary()
 
     let prefixSuffix = """
@@ -82,7 +82,7 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
       rss.titleSuffix: Suffix
       """
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -100,24 +100,24 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
   // feed-reuse caching behavior, which differs after the swift-markdown/Plot vendoring — a
   // known pre-existing behavioral diff, not a regression from this PR.
 
-  internal func testNotReusingPreviousFeedIfConfigChanged() throws {
+  internal func testNotReusingPreviousFeedIfConfigChanged() async throws {
     let folder = try Folder.createTemporary()
     let contentFile = try folder.createFile(at: "Content/one/item.md")
     try contentFile.write(makeStubbedAudioMetadata())
 
-    try generateFeed(in: folder)
+    try await generateFeed(in: folder)
     let feedA = try folder.file(at: "Output/feed.rss").readAsString()
 
     var newConfig = try makeConfigStub()
     newConfig.author.name = "New author name"
     let newDate = Date().addingTimeInterval(60 * 60)
-    try generateFeed(in: folder, config: newConfig, date: newDate)
+    try await generateFeed(in: folder, config: newConfig, date: newDate)
     let feedB = try folder.file(at: "Output/feed.rss").readAsString()
 
     XCTAssertNotEqual(feedA, feedB)
   }
 
-  internal func testNotReusingPreviousFeedIfItemWasAdded() throws {
+  internal func testNotReusingPreviousFeedIfItemWasAdded() async throws {
     let folder = try Folder.createTemporary()
 
     let audio = try Audio(
@@ -143,7 +143,7 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
       )
     )
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       generationSteps: [
         .addItem(itemA)
@@ -152,7 +152,7 @@ internal final class PodcastFeedGenerationTests: PublishTestCase {
 
     let feedA = try folder.file(at: "Output/feed.rss").readAsString()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       generationSteps: [
         .addItem(itemA),
@@ -204,8 +204,8 @@ extension PodcastFeedGenerationTests {
     ],
     date: Date = Date(),
     content: [Path: String] = [:]
-  ) throws {
-    try publishWebsiteWithPodcast(
+  ) async throws {
+    try await publishWebsiteWithPodcast(
       in: folder,
       using: [
         .group(generationSteps),

@@ -8,7 +8,6 @@ import Files
 import Foundation
 import Ink
 import Plot
-import Synchronization
 
 /// Type that represents the context in which a website is being published.
 /// It can be used to manipulate the state of the website in various ways,
@@ -36,16 +35,20 @@ public struct PublishingContext<Site: Website>: Sendable {
   /// A representation of the website's main index page.
   public var index = Index()
   /// The sections that the website contains.
-  public var sections = SectionMap<Site>() { didSet { tagCache.tags = nil } }
+  public var sections = SectionMap<Site>()
   /// The free-form pages that the website contains.
   public internal(set) var pages = [Path: Page]()
   /// A set containing all tags that are currently being used website-wide.
-  public var allTags: Set<Tag> { tagCache.tags ?? gatherAllTags() }
+  ///
+  /// Computed on demand by unioning each section's tag keys. `sections` is
+  /// mutated throughout the pipeline (content loading, item filtering), so a
+  /// cache would need invalidating on every change; the gather is cheap enough
+  /// — and read rarely enough — that computing it is simpler than caching it.
+  public var allTags: Set<Tag> { gatherAllTags() }
   /// Any date when the website was last generated.
   public private(set) var lastGenerationDate: Date?
 
   internal let folders: Folder.Group
-  private let tagCache = TagCache()
   internal var stepName: String
 
   internal init(
@@ -104,19 +107,6 @@ extension PublishingContext {
 }
 
 extension PublishingContext {
-  /// A `Sendable` cache for the website-wide tag set, backed by a Mutex so
-  /// that the synchronous `allTags` getter is preserved while keeping
-  /// `PublishingContext` `Sendable` (rather than turning `allTags` async via
-  /// an actor).
-  fileprivate final class TagCache: Sendable {
-    private let storage = Mutex<Set<Tag>?>(nil)
-
-    var tags: Set<Tag>? {
-      get { storage.withLock { $0 } }
-      set { storage.withLock { $0 = newValue } }
-    }
-  }
-
   fileprivate mutating func updateLastGenerationDate() throws {
     let fileName = "lastGenerationDate"
     let newString = String(Date().timeIntervalSince1970)
@@ -142,7 +132,6 @@ extension PublishingContext {
       tags.formUnion(section.allTags)
     }
 
-    tagCache.tags = tags
     return tags
   }
 

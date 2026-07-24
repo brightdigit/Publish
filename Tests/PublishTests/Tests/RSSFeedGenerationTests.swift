@@ -9,10 +9,10 @@ import Publish
 import XCTest
 
 internal final class RSSFeedGenerationTests: PublishTestCase {
-  internal func testOnlyIncludingSpecifiedSections() throws {
+  internal func testOnlyIncludingSpecifiedSections() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/a.md": "Included",
@@ -25,10 +25,10 @@ internal final class RSSFeedGenerationTests: PublishTestCase {
     XCTAssertFalse(feed.contains("Not included"))
   }
 
-  internal func testOnlyIncludingItemsMatchingPredicate() throws {
+  internal func testOnlyIncludingItemsMatchingPredicate() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       itemPredicate: \.path == "one/a",
       content: [
@@ -42,10 +42,10 @@ internal final class RSSFeedGenerationTests: PublishTestCase {
     XCTAssertFalse(feed.contains("Not included"))
   }
 
-  internal func testConvertingRelativeLinksToAbsolute() throws {
+  internal func testConvertingRelativeLinksToAbsolute() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -67,10 +67,10 @@ internal final class RSSFeedGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testItemTitlePrefixAndSuffix() throws {
+  internal func testItemTitlePrefixAndSuffix() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -87,10 +87,10 @@ internal final class RSSFeedGenerationTests: PublishTestCase {
     XCTAssertTrue(feed.contains("<title>PrefixTitleSuffix</title>"))
   }
 
-  internal func testItemBodyPrefixAndSuffix() throws {
+  internal func testItemBodyPrefixAndSuffix() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -114,10 +114,10 @@ internal final class RSSFeedGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testCustomItemLink() throws {
+  internal func testCustomItemLink() async throws {
     let folder = try Folder.createTemporary()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       content: [
         "one/item.md": """
@@ -155,8 +155,8 @@ extension RSSFeedGenerationTests {
     ],
     date: Date = Date(),
     content: [Path: String] = [:]
-  ) throws {
-    try publishWebsite(
+  ) async throws {
+    try await publishWebsite(
       in: folder,
       using: [
         .group(generationSteps),

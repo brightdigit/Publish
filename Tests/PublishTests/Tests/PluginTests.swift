@@ -10,8 +10,8 @@ import Publish
 import XCTest
 
 internal final class PluginTests: PublishTestCase {
-  internal func testAddingContentUsingPlugin() throws {
-    let site = try publishWebsite(using: [
+  internal func testAddingContentUsingPlugin() async throws {
+    let site = try await publishWebsite(using: [
       .installPlugin(
         Plugin(name: "Plugin") { context in
           context.addItem(.stub())
@@ -22,8 +22,8 @@ internal final class PluginTests: PublishTestCase {
     XCTAssertEqual(site.sections[.one].items.count, 1)
   }
 
-  internal func testAddingInkModifierUsingPlugin() throws {
-    let site = try publishWebsite(
+  internal func testAddingInkModifierUsingPlugin() async throws {
+    let site = try await publishWebsite(
       using: [
         .installPlugin(
           Plugin(name: "Plugin") { context in
@@ -50,14 +50,14 @@ internal final class PluginTests: PublishTestCase {
     XCTAssertEqual(items.first?.body.html, "<div><p>Hello</p></div>")
   }
 
-  internal func testAddingPluginToDefaultPipeline() throws {
+  internal func testAddingPluginToDefaultPipeline() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeIndexHTML: { content, _ in
         HTML(.body(content.body.node)).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: ["index.md": "Hello, World!"],
       plugins: [

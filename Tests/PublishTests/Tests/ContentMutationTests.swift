@@ -8,8 +8,8 @@ import Publish
 import XCTest
 
 internal final class ContentMutationTests: PublishTestCase {
-  internal func testAddingItemUsingClosureAPI() throws {
-    let site = try publishWebsite(using: [
+  internal func testAddingItemUsingClosureAPI() async throws {
+    let site = try await publishWebsite(using: [
       .step(named: "Custom") { context in
         context.sections[.one].addItem(at: "path", withMetadata: .init()) { item in
           item.title = "Hello, world!"
@@ -21,8 +21,8 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.one].items.first?.title, "Hello, world!")
   }
 
-  internal func testAddingItemUsingPlotHierarchy() throws {
-    let site = try publishWebsite(using: [
+  internal func testAddingItemUsingPlotHierarchy() async throws {
+    let site = try await publishWebsite(using: [
       .addItem(
         Item.stub().setting(
           \.body,
@@ -35,13 +35,13 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.one].items.first?.body.html, "<div>Plot!</div>")
   }
 
-  internal func testRemovingItemsMatchingPredicate() throws {
+  internal func testRemovingItemsMatchingPredicate() async throws {
     let items = [
       Item.stub(withPath: "a").setting(\.tags, to: ["one"]),
       Item.stub(withPath: "b").setting(\.tags, to: ["one", "two"]),
     ]
 
-    let site = try publishWebsite(using: [
+    let site = try await publishWebsite(using: [
       .addItems(in: items),
       .removeAllItems(matching: \.tags ~= "two"),
     ])
@@ -50,8 +50,8 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertNil(site.sections[.one].item(at: "b"), "Item indexes not updated")
   }
 
-  internal func testMutatingAllSections() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingAllSections() async throws {
+    let site = try await publishWebsite(using: [
       .step(named: "Set section titles") { context in
         context.mutateAllSections { section in
           section.title = section.id.rawValue
@@ -64,8 +64,8 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.three].title, "three")
   }
 
-  internal func testMutatingAllItems() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingAllItems() async throws {
+    let site = try await publishWebsite(using: [
       .addItem(.stub(withSectionID: .one)),
       .addItem(.stub(withSectionID: .two)),
       .addItem(.stub(withSectionID: .three)),
@@ -83,8 +83,8 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.three].items.first?.title, "Mutated title")
   }
 
-  internal func testMutatingItemsInSection() throws {
-    let site = try publishWebsite(using: [
+  internal func testMutatingItemsInSection() async throws {
+    let site = try await publishWebsite(using: [
       .addItem(.stub(withSectionID: .one)),
       .addItem(.stub(withSectionID: .two)),
       .addItem(.stub(withSectionID: .three)),
@@ -102,13 +102,13 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.three].items.first?.title, "")
   }
 
-  internal func testMutatingItemsMatchingPredicate() throws {
+  internal func testMutatingItemsMatchingPredicate() async throws {
     var items = [
       Item.stub(withPath: "a").setting(\.tags, to: ["one"]),
       Item.stub(withPath: "b").setting(\.tags, to: ["one", "two"]),
     ]
 
-    let site = try publishWebsite(using: [
+    let site = try await publishWebsite(using: [
       .addItems(in: items),
       .mutateAllItems(
         matching: \.tags ~= "one",
@@ -130,19 +130,19 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(Array(site.sections[.one].items), items)
   }
 
-  internal func testSortingItems() throws {
+  internal func testSortingItems() async throws {
     let items = [
       Item.stub(withPath: "a").setting(\.title, to: "A"),
       Item.stub(withPath: "b").setting(\.title, to: "B"),
       Item.stub(withPath: "c").setting(\.title, to: "C"),
     ]
 
-    let ascendingSite = try publishWebsite(using: [
+    let ascendingSite = try await publishWebsite(using: [
       .addItems(in: items),
       .sortItems(by: \.title, order: .ascending),
     ])
 
-    let descendingSite = try publishWebsite(using: [
+    let descendingSite = try await publishWebsite(using: [
       .addItems(in: items),
       .sortItems(by: \.title, order: .descending),
     ])
@@ -160,7 +160,7 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(descendingSite.sections[.one].item(at: "c"), items[2])
   }
 
-  internal func testSortingItemsInSection() throws {
+  internal func testSortingItemsInSection() async throws {
     let items = [
       Item.stub(withSectionID: .one).setting(\.title, to: "A"),
       Item.stub(withSectionID: .one).setting(\.title, to: "B"),
@@ -168,7 +168,7 @@ internal final class ContentMutationTests: PublishTestCase {
       Item.stub(withSectionID: .two).setting(\.title, to: "B"),
     ]
 
-    let site = try publishWebsite(using: [
+    let site = try await publishWebsite(using: [
       .addItems(in: items),
       .sortItems(in: .one, by: \.title, order: .descending),
     ])
@@ -177,10 +177,10 @@ internal final class ContentMutationTests: PublishTestCase {
     XCTAssertEqual(site.sections[.two].items, Array(items[2..<4]))
   }
 
-  internal func testMutatingItemUsingContentProxyProperties() throws {
+  internal func testMutatingItemUsingContentProxyProperties() async throws {
     let audio = Audio(url: try require(URL(string: "audio.mp3")))
 
-    let site = try publishWebsite(using: [
+    let site = try await publishWebsite(using: [
       .addItem(.stub(withPath: "item")),
       .mutateItem(at: "item", in: .one) { item in
         item.title = "Title"

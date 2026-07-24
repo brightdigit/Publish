@@ -8,7 +8,6 @@ import Files
 import Foundation
 import Ink
 import Plot
-import Synchronization
 
 extension PublishingContext {
   /// Retrieve a folder at a given path, starting from the website's root folder.

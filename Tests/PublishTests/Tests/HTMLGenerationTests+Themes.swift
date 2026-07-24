@@ -10,14 +10,14 @@ import Publish
 import XCTest
 
 extension HTMLGenerationTests {
-  internal func testAlwaysGeneratingIndexPageForAllSections() throws {
+  internal func testAlwaysGeneratingIndexPageForAllSections() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeSectionHTML: { section, _ in
         HTML(.body(.text(section.id.rawValue))).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       expectedHTML: [
         "one/index.html": "one",
@@ -28,13 +28,13 @@ extension HTMLGenerationTests {
     )
   }
 
-  internal func testNotGeneratingTagHTMLForIncompatibleTheme() throws {
+  internal func testNotGeneratingTagHTMLForIncompatibleTheme() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeTagListHTML: nil,
       makeTagDetailsHTML: nil
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       additionalSteps: [
         .addItem(Item.stub(withPath: "item").setting(\.tags, to: ["tag"]))
@@ -51,13 +51,13 @@ extension HTMLGenerationTests {
     )
   }
 
-  internal func testNotGeneratingTagHTMLWhenDisabled() throws {
+  internal func testNotGeneratingTagHTMLWhenDisabled() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>()
 
     var site = WebsiteStub.WithoutItemMetadata()
     site.tagHTMLConfig = nil
 
-    try publishWebsite(
+    try await publishWebsite(
       site,
       using: Theme(htmlFactory: htmlFactory),
       additionalSteps: [
@@ -75,12 +75,12 @@ extension HTMLGenerationTests {
     )
   }
 
-  internal func testGeneratingStandAloneHTMLFiles() throws {
+  internal func testGeneratingStandAloneHTMLFiles() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>()
     let folder = try Folder.createTemporary()
     let theme = Theme(htmlFactory: htmlFactory)
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .addItem(Item.stub(withPath: "item").setting(\.tags, to: ["tag"])),
@@ -110,10 +110,10 @@ extension HTMLGenerationTests {
     )
   }
 
-  internal func testFoundationTheme() throws {
+  internal func testFoundationTheme() async throws {
     let folder = try Folder.createTemporary()
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: [
         .addMarkdownFiles(),

@@ -10,13 +10,13 @@ import Publish
 import XCTest
 
 internal final class MarkdownTests: PublishTestCase {
-  internal func testParsingFileWithTitle() throws {
-    let item = try generateItem(fromMarkdown: "# Title")
+  internal func testParsingFileWithTitle() async throws {
+    let item = try await generateItem(fromMarkdown: "# Title")
     XCTAssertEqual(item.title, "Title")
   }
 
-  internal func testParsingFileWithOverriddenTitle() throws {
-    let item = try generateItem(
+  internal func testParsingFileWithOverriddenTitle() async throws {
+    let item = try await generateItem(
       fromMarkdown: """
         ---
         title: Overridden title
@@ -28,8 +28,8 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(item.title, "Overridden title")
   }
 
-  internal func testParsingFileWithNoTitle() throws {
-    let item = try generateItem(
+  internal func testParsingFileWithNoTitle() async throws {
+    let item = try await generateItem(
       fromMarkdown: """
         ---
         description: A description
@@ -41,8 +41,8 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(item.title, "fallback")
   }
 
-  internal func testParsingFileWithOverriddenPath() throws {
-    let item = try generateItem(
+  internal func testParsingFileWithOverriddenPath() async throws {
+    let item = try await generateItem(
       fromMarkdown: """
         ---
         path: overridden-path
@@ -53,8 +53,8 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(item.path, "one/overridden-path")
   }
 
-  internal func testParsingFileWithBuiltInMetadata() throws {
-    let item = try generateItem(
+  internal func testParsingFileWithBuiltInMetadata() async throws {
+    let item = try await generateItem(
       fromMarkdown: """
         ---
         description: Description
@@ -85,7 +85,7 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(item.video, .youTube(id: "12345"))
   }
 
-  internal func testParsingFileWithCustomMetadata() throws {
+  internal func testParsingFileWithCustomMetadata() async throws {
     struct Metadata: WebsiteItemMetadata {
       struct Nested: WebsiteItemMetadata {
         var string: String
@@ -102,7 +102,7 @@ internal final class MarkdownTests: PublishTestCase {
       var nested: Nested
     }
 
-    let item = try generateItem(
+    let item = try await generateItem(
       withMetadataType: Metadata.self,
       fromMarkdown: """
         ---
@@ -132,12 +132,12 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(item.metadata.nested.url, URL(string: "https://nested.url"))
   }
 
-  internal func testParsingPageInNestedFolder() throws {
+  internal func testParsingPageInNestedFolder() async throws {
     let folder = try Folder.createTemporary()
     let pageFile = try folder.createFile(at: "Content/my/custom/page.md")
     try pageFile.write("# MyPage")
 
-    let site = try publishWebsite(
+    let site = try await publishWebsite(
       in: folder,
       using: [
         .addMarkdownFiles()
@@ -147,13 +147,13 @@ internal final class MarkdownTests: PublishTestCase {
     XCTAssertEqual(site.pages["my/custom/page"]?.title, "MyPage")
   }
 
-  internal func testNotParsingNonMarkdownFiles() throws {
+  internal func testNotParsingNonMarkdownFiles() async throws {
     let folder = try Folder.createTemporary()
     try folder.createFile(at: "Content/image.png")
     try folder.createFile(at: "Content/one/image.png")
     try folder.createFile(at: "Content/custom/image.png")
 
-    let site = try publishWebsite(
+    let site = try await publishWebsite(
       in: folder,
       using: [
         .addMarkdownFiles()

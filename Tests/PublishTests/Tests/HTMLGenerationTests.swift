@@ -10,28 +10,28 @@ import Publish
 import XCTest
 
 internal final class HTMLGenerationTests: PublishTestCase {
-  internal func testGeneratingIndexHTML() throws {
+  internal func testGeneratingIndexHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeIndexHTML: { content, _ in
         HTML(.body(.text(content.title))).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: ["index.md": "# Hello, world!"],
       expectedHTML: ["index.html": "Hello, world!"]
     )
   }
 
-  internal func testGeneratingSectionHTML() throws {
+  internal func testGeneratingSectionHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeSectionHTML: { section, _ in
         HTML(.body(.text(section.title))).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: [
         "one/index.md": "# Section 1",
@@ -44,7 +44,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testGeneratingItemHTML() throws {
+  internal func testGeneratingItemHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeItemHTML: { item, _ in
         HTML(
@@ -57,7 +57,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: [
         "one/a.md": """
@@ -80,14 +80,14 @@ internal final class HTMLGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testGeneratingNestedItemHTML() throws {
+  internal func testGeneratingNestedItemHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeItemHTML: { item, _ in
         HTML(.body(.text(item.title))).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: [
         "one/2019/12/a.md": """
@@ -104,14 +104,14 @@ internal final class HTMLGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testGeneratingPageHTML() throws {
+  internal func testGeneratingPageHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makePageHTML: { page, _ in
         HTML(.body(.text(page.title))).node
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: [
         "page1.md": "# Page 1",
@@ -133,7 +133,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testGeneratingTagHTML() throws {
+  internal func testGeneratingTagHTML() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makeTagListHTML: { page, _ in
         HTML(
@@ -151,7 +151,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
       }
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       using: Theme(htmlFactory: htmlFactory),
       content: [
         "one/a.md": """
@@ -178,7 +178,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
     )
   }
 
-  internal func testCleaningUpOldHTMLFiles() throws {
+  internal func testCleaningUpOldHTMLFiles() async throws {
     let htmlFactory = HTMLFactoryMock<WebsiteStub.WithoutItemMetadata>(
       makePageHTML: { page, _ in
         HTML(.body(.text(page.title))).node
@@ -187,7 +187,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
 
     let folder = try Folder.createTemporary()
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: Theme(htmlFactory: htmlFactory),
       content: [
@@ -198,7 +198,7 @@ internal final class HTMLGenerationTests: PublishTestCase {
       ]
     )
 
-    try publishWebsite(
+    try await publishWebsite(
       in: folder,
       using: Theme(htmlFactory: htmlFactory),
       content: [

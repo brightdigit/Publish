@@ -7,13 +7,13 @@
 import XCTest
 
 internal func assertErrorThrown<T, E: Error & Equatable>(
-  _ expression: @autoclosure () throws -> T,
+  _ expression: @autoclosure () async throws -> T,
   _ expectedError: @autoclosure () -> E,
   file: StaticString = #filePath,
   line: UInt = #line
-) {
+) async {
   do {
-    _ = try expression()
+    _ = try await expression()
     XCTFail(
       "Expected an error to be thrown",
       file: file,

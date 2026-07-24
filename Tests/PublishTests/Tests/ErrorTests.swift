@@ -9,9 +9,9 @@ import XCTest
 @testable import Publish
 
 internal final class ErrorTests: PublishTestCase {
-  internal func testErrorForInvalidRootPath() throws {
-    assertErrorThrown(
-      try WebsiteStub.WithoutItemMetadata().publish(
+  internal func testErrorForInvalidRootPath() async throws {
+    await assertErrorThrown(
+      try await WebsiteStub.WithoutItemMetadata().publish(
         at: "🤷‍♂️",
         using: []
       ),
@@ -22,7 +22,7 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForMissingMarkdownMetadata() throws {
+  internal func testErrorForMissingMarkdownMetadata() async throws {
     struct Metadata: WebsiteItemMetadata {
       let string: String
     }
@@ -33,8 +33,8 @@ internal final class ErrorTests: PublishTestCase {
       ---
       """
 
-    assertErrorThrown(
-      try generateItem(
+    await assertErrorThrown(
+      try await generateItem(
         withMetadataType: Metadata.self,
         in: .one,
         fromMarkdown: markdown,
@@ -52,13 +52,13 @@ internal final class ErrorTests: PublishTestCase {
   // invalid metadata value, but swift-markdown no longer throws here — a known pre-existing
   // behavioral diff from the swift-markdown vendoring, not a regression from this PR.
 
-  internal func testErrorForThrowingDuringItemMutation() throws {
+  internal func testErrorForThrowingDuringItemMutation() async throws {
     struct Error: LocalizedError {
       var errorDescription: String? { "An error" }
     }
 
-    assertErrorThrown(
-      try publishWebsite(using: [
+    await assertErrorThrown(
+      try await publishWebsite(using: [
         .addItem(.stub(withPath: "path/to/item")),
         .mutateAllItems { _ in
           throw Error()
@@ -73,9 +73,9 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForMissingPage() throws {
-    assertErrorThrown(
-      try publishWebsite(using: [
+  internal func testErrorForMissingPage() async throws {
+    await assertErrorThrown(
+      try await publishWebsite(using: [
         .mutatePage(at: "invalid/path") { _ in }
       ]),
       PublishingError(
@@ -86,13 +86,13 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForThrowingDuringPageMutation() throws {
+  internal func testErrorForThrowingDuringPageMutation() async throws {
     struct Error: LocalizedError {
       var errorDescription: String? { "An error" }
     }
 
-    assertErrorThrown(
-      try publishWebsite(using: [
+    await assertErrorThrown(
+      try await publishWebsite(using: [
         .addPage(.stub(withPath: "page")),
         .mutateAllPages { _ in
           throw Error()
@@ -107,9 +107,9 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForMissingFolder() throws {
-    assertErrorThrown(
-      try publishWebsite(using: [
+  internal func testErrorForMissingFolder() async throws {
+    await assertErrorThrown(
+      try await publishWebsite(using: [
         .copyFiles(at: "non/existing")
       ]),
       PublishingError(
@@ -120,9 +120,9 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForMissingFile() throws {
-    assertErrorThrown(
-      try publishWebsite(using: [
+  internal func testErrorForMissingFile() async throws {
+    await assertErrorThrown(
+      try await publishWebsite(using: [
         .copyFile(at: "non/existing.png")
       ]),
       PublishingError(
@@ -133,9 +133,9 @@ internal final class ErrorTests: PublishTestCase {
     )
   }
 
-  internal func testErrorForNoPublishingSteps() throws {
-    assertErrorThrown(
-      try publishWebsite(using: []),
+  internal func testErrorForNoPublishingSteps() async throws {
+    await assertErrorThrown(
+      try await publishWebsite(using: []),
       PublishingError(
         infoMessage: "WebsiteName has no publishing steps."
       )

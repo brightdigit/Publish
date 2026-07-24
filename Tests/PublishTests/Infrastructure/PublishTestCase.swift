@@ -15,8 +15,8 @@ internal class PublishTestCase: XCTestCase {
     in folder: Folder? = nil,
     using steps: [PublishingStep<WebsiteStub.WithoutItemMetadata>],
     content: [Path: String] = [:]
-  ) throws -> PublishedWebsite<WebsiteStub.WithoutItemMetadata> {
-    try performWebsitePublishing(
+  ) async throws -> PublishedWebsite<WebsiteStub.WithoutItemMetadata> {
+    try await performWebsitePublishing(
       in: folder,
       using: steps,
       files: content,
@@ -35,7 +35,7 @@ internal class PublishTestCase: XCTestCase {
     allowlistedOutputFiles: Bool = true,
     file: StaticString = #filePath,
     line: UInt = #line
-  ) throws {
+  ) async throws {
     let folder = try folder ?? Folder.createTemporary()
 
     let contentFolderName = "Content"
@@ -44,7 +44,7 @@ internal class PublishTestCase: XCTestCase {
     let contentFolder = try folder.createSubfolder(named: contentFolderName)
     try addFiles(withContent: content, to: contentFolder, pathPrefix: "")
 
-    try site.publish(
+    try await site.publish(
       withTheme: theme,
       at: Path(folder.path),
       rssFeedSections: [],
@@ -65,8 +65,8 @@ internal class PublishTestCase: XCTestCase {
     in folder: Folder? = nil,
     using steps: [PublishingStep<WebsiteStub.WithPodcastMetadata>],
     content: [Path: String] = [:]
-  ) throws {
-    try performWebsitePublishing(
+  ) async throws {
+    try await performWebsitePublishing(
       in: folder,
       using: steps,
       files: content,
@@ -139,8 +139,8 @@ internal class PublishTestCase: XCTestCase {
     withItemMetadataType itemMetadataType: T.Type,
     using steps: [PublishingStep<WebsiteStub.WithItemMetadata<T>>],
     content: [Path: String] = [:]
-  ) throws -> PublishedWebsite<WebsiteStub.WithItemMetadata<T>> {
-    try performWebsitePublishing(
+  ) async throws -> PublishedWebsite<WebsiteStub.WithItemMetadata<T>> {
+    try await performWebsitePublishing(
       using: steps,
       files: content,
       filePathPrefix: "Content/"
@@ -151,8 +151,8 @@ internal class PublishTestCase: XCTestCase {
     in section: WebsiteStub.SectionID = .one,
     fromMarkdown markdown: String,
     fileName: String = "markdown.md"
-  ) throws -> Item<WebsiteStub.WithoutItemMetadata> {
-    let site = try publishWebsite(
+  ) async throws -> Item<WebsiteStub.WithoutItemMetadata> {
+    let site = try await publishWebsite(
       using: [
         .addMarkdownFiles()
       ],
@@ -169,8 +169,8 @@ internal class PublishTestCase: XCTestCase {
     in section: WebsiteStub.SectionID = .one,
     fromMarkdown markdown: String,
     fileName: String = "markdown.md"
-  ) throws -> Item<WebsiteStub.WithItemMetadata<T>> {
-    let site = try publishWebsite(
+  ) async throws -> Item<WebsiteStub.WithItemMetadata<T>> {
+    let site = try await publishWebsite(
       withItemMetadataType: T.self,
       using: [
         .addMarkdownFiles()
@@ -202,12 +202,12 @@ extension PublishTestCase {
     using steps: [PublishingStep<WebsiteStub.Site<Metadata>>],
     files: [Path: String],
     filePathPrefix: String = ""
-  ) throws -> PublishedWebsite<WebsiteStub.Site<Metadata>> {
+  ) async throws -> PublishedWebsite<WebsiteStub.Site<Metadata>> {
     let folder = try folder ?? Folder.createTemporary()
 
     try addFiles(withContent: files, to: folder, pathPrefix: filePathPrefix)
 
-    return try WebsiteStub.Site<Metadata>().publish(
+    return try await WebsiteStub.Site<Metadata>().publish(
       at: Path(folder.path),
       using: steps
     )

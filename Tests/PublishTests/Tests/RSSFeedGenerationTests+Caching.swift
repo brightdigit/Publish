@@ -10,15 +10,15 @@ import Publish
 import XCTest
 
 extension RSSFeedGenerationTests {
-  internal func testReusingPreviousFeedIfNoItemsWereModified() throws {
+  internal func testReusingPreviousFeedIfNoItemsWereModified() async throws {
     let folder = try Folder.createTemporary()
     let contentFile = try folder.createFile(at: "Content/one/item.md")
 
-    try generateFeed(in: folder)
+    try await generateFeed(in: folder)
     let feedA = try folder.file(at: "Output/feed.rss").readAsString()
 
     let newDate = Date().addingTimeInterval(60 * 60)
-    try generateFeed(in: folder, date: newDate)
+    try await generateFeed(in: folder, date: newDate)
     let feedB = try folder.file(at: "Output/feed.rss").readAsString()
 
     XCTAssertEqual(feedA, feedB)
@@ -28,33 +28,33 @@ extension RSSFeedGenerationTests {
       [.modificationDate: newDate],
       ofItemAtPath: contentFile.path
     )
-    try generateFeed(in: folder, date: newDate)
+    try await generateFeed(in: folder, date: newDate)
     let feedC = try folder.file(at: "Output/feed.rss").readAsString()
 
     XCTAssertNotEqual(feedB, feedC)
   }
 
-  internal func testNotReusingPreviousFeedIfConfigChanged() throws {
+  internal func testNotReusingPreviousFeedIfConfigChanged() async throws {
     let folder = try Folder.createTemporary()
     try folder.createFile(at: "Content/one/item.md")
 
-    try generateFeed(in: folder)
+    try await generateFeed(in: folder)
     let feedA = try folder.file(at: "Output/feed.rss").readAsString()
 
     let newConfig = RSSFeedConfiguration(ttlInterval: 5_000)
     let newDate = Date().addingTimeInterval(60 * 60)
-    try generateFeed(in: folder, config: newConfig, date: newDate)
+    try await generateFeed(in: folder, config: newConfig, date: newDate)
     let feedB = try folder.file(at: "Output/feed.rss").readAsString()
 
     XCTAssertNotEqual(feedA, feedB)
   }
 
-  internal func testNotReusingPreviousFeedIfItemWasAdded() throws {
+  internal func testNotReusingPreviousFeedIfItemWasAdded() async throws {
     let folder = try Folder.createTemporary()
     let itemA = Item.stub()
     let itemB = Item.stub().setting(\.lastModified, to: itemA.lastModified)
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       generationSteps: [
         .addItem(itemA)
@@ -63,7 +63,7 @@ extension RSSFeedGenerationTests {
 
     let feedA = try folder.file(at: "Output/feed.rss").readAsString()
 
-    try generateFeed(
+    try await generateFeed(
       in: folder,
       generationSteps: [
         .addItem(itemA),
