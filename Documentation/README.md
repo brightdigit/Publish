@@ -10,7 +10,6 @@ Shorter articles focused on explaining how to get a given task done using Publis
 - Adding syntax highlighting to markdown code blocks:
     - [Using highlight.js, a JavaScript tool with support for over 180 languages](HowTo/SyntaxHighlighting/using-highlight-js.md) *(BrightDigit site default)*
     - [Using Pygments, a Python tool with support for over 500 languages](HowTo/SyntaxHighlighting/using-pygments.md)
-    - ~~Using Splash~~ — removed from this fork; prefer highlight.js
 - [Conditionally running a publishing step](HowTo/conditionally-run-a-step.md)
 - [Expressing custom metadata values using Markdown](HowTo/custom-markdown-metadata-values.md)
 - [Nesting items within folders](HowTo/nested-items.md)

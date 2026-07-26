@@ -230,9 +230,9 @@ try DeliciousRecipes().publish(using: [
 
 *If your plugin is hosted on GitHub you can use the `publish-plugin` [topic](https://help.github.com/en/github/administering-a-repository/classifying-your-repository-with-topics#adding-topics-to-your-repository) so it can be found with the rest of [community plugins](https://github.com/topics/publish-plugin?l=swift).*
 
-> **BrightDigit note:** Splash / SplashPublishPlugin were removed from this
-> fork. Syntax highlighting is handled client-side (highlight.js in the site
-> `Styling` bundle). See `Documentation/HowTo/SyntaxHighlighting/using-highlight-js.md`.
+> **BrightDigit note:** syntax highlighting in this fork is handled client-side
+> (highlight.js in the site `Styling` bundle). See
+> `Documentation/HowTo/SyntaxHighlighting/using-highlight-js.md`.
 
 ## System requirements
 
