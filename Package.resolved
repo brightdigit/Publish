@@ -7,7 +7,7 @@
       "location" : "https://github.com/brightdigit/Files.git",
       "state" : {
         "branch" : "main",
-        "revision" : "923a4c9ec51384583ec15b21b3196e784a1c0b81"
+        "revision" : "6638e7c3de269443e784b5fd60bf4f6a1f33e36e"
       }
     },
     {
@@ -16,7 +16,7 @@
       "location" : "https://github.com/brightdigit/Ink.git",
       "state" : {
         "branch" : "main",
-        "revision" : "775a97078469706f76a91f9507c209079c25f2e5"
+        "revision" : "7f5072820db01c259b4470a6117e759358bcf986"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/brightdigit/Plot.git",
       "state" : {
         "branch" : "main",
-        "revision" : "793bca83340d09694f5207660a9e319079185131"
+        "revision" : "e966c8779e955408d021a0b8be9c80a42b942ff2"
       }
     },
     {
