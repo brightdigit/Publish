@@ -6,31 +6,31 @@
 
 import XCTest
 
-func assertErrorThrown<T, E: Error & Equatable>(
-    _ expression: @autoclosure () throws -> T,
-    _ expectedError: @autoclosure () -> E,
-    file: StaticString = #file,
-    line: UInt = #line
-) {
-    do {
-        _ = try expression()
-        XCTFail(
-            "Expected an error to be thrown",
-            file: file,
-            line: line
-        )
-    } catch let error as E {
-        XCTAssertEqual(
-            error,
-            expectedError(),
-            file: file,
-            line: line
-        )
-    } catch {
-        XCTFail(
-            "Unexpected error thrown: \(error)",
-            file: file,
-            line: line
-        )
-    }
+internal func assertErrorThrown<T, E: Error & Equatable>(
+  _ expression: @autoclosure () async throws -> T,
+  _ expectedError: @autoclosure () -> E,
+  file: StaticString = #filePath,
+  line: UInt = #line
+) async {
+  do {
+    _ = try await expression()
+    XCTFail(
+      "Expected an error to be thrown",
+      file: file,
+      line: line
+    )
+  } catch let error as E {
+    XCTAssertEqual(
+      error,
+      expectedError(),
+      file: file,
+      line: line
+    )
+  } catch {
+    XCTFail(
+      "Unexpected error thrown: \(error)",
+      file: file,
+      line: line
+    )
+  }
 }
