@@ -1,21 +1,23 @@
 /**
 *  Publish
-*  Copyright (c) John Sundell 2020
+*  Copyright (c) John Sundell 2021
 *  MIT license, see LICENSE file for details
 */
 
-internal extension String {
-    func normalized() -> String {
-        String(lowercased().compactMap { character in
-            if character.isWhitespace {
-                return "-"
-            }
+extension String {
+  internal func normalized() -> String {
+    String(
+      lowercased().compactMap { character in
+        if character.isWhitespace {
+          return "-"
+        }
 
-            if character.isLetter || character.isNumber {
-                return character
-            }
+        if character.isLetter || character.isNumber {
+          return character
+        }
 
-            return nil
-        })
-    }
+        return nil
+      }
+    )
+  }
 }

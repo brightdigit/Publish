@@ -1,16 +1,16 @@
 /**
 *  Publish
-*  Copyright (c) John Sundell 2019
+*  Copyright (c) John Sundell 2021
 *  MIT license, see LICENSE file for details
 */
 
 import Files
 
-internal extension Folder {
-    struct Group {
-        let root: Folder
-        let output: Folder
-        let `internal`: Folder
-        let caches: Folder
-    }
+extension Folder {
+  internal struct Group: Sendable {
+    internal let root: Folder
+    internal let output: Folder
+    internal let `internal`: Folder
+    internal let caches: Folder
+  }
 }

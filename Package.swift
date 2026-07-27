@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:6.4
 
 /**
 *  Publish
@@ -10,67 +10,40 @@ import PackageDescription
 
 let package = Package(
     name: "Publish",
-    platforms: [.macOS(.v12)],
+    // Files requires iOS 18 / tvOS 18 / watchOS 11 (Synchronization.Mutex).
+    platforms: [
+        .macOS(.v15),
+        .iOS(.v18),
+        .tvOS(.v18),
+        .watchOS(.v11)
+    ],
     products: [
-        .library(name: "Publish", targets: ["Publish"]),
-        .executable(name: "publish-cli", targets: ["PublishCLI"])
+        .library(name: "Publish", targets: ["Publish"])
     ],
     dependencies: [
         .package(
-            name: "Ink",
-            url: "https://github.com/johnsundell/ink.git",
-            from: "0.2.0"
+            url: "https://github.com/brightdigit/Ink.git",
+            from: "1.0.0-alpha.1"
         ),
         .package(
-            name: "Plot",
-            url: "https://github.com/johnsundell/plot.git",
-            from: "0.9.0"
+            url: "https://github.com/brightdigit/Plot.git",
+            from: "1.0.0-alpha.1"
         ),
         .package(
-            name: "Files",
-            url: "https://github.com/johnsundell/files.git",
-            from: "4.0.0"
-        ),
-        .package(
-            name: "Codextended",
-            url: "https://github.com/johnsundell/codextended.git",
-            from: "0.1.0"
-        ),
-        .package(
-            name: "ShellOut",
-            url: "https://github.com/johnsundell/shellout.git",
-            from: "2.3.0"
-        ),
-        .package(
-            name: "Sweep",
-            url: "https://github.com/johnsundell/sweep.git",
-            from: "0.4.0"
-        ),
-        .package(
-            name: "CollectionConcurrencyKit",
-            url: "https://github.com/johnsundell/collectionConcurrencyKit.git",
-            from: "0.1.0"
+            url: "https://github.com/brightdigit/Files.git",
+            from: "5.0.0-alpha.1"
         )
     ],
     targets: [
         .target(
             name: "Publish",
             dependencies: [
-                "Ink", "Plot", "Files", "Codextended",
-                "ShellOut", "Sweep", "CollectionConcurrencyKit"
+                "Ink", "Plot", "Files"
             ]
-        ),
-        .executableTarget(
-            name: "PublishCLI",
-            dependencies: ["PublishCLICore"]
-        ),
-        .target(
-            name: "PublishCLICore",
-            dependencies: ["Publish"]
         ),
         .testTarget(
             name: "PublishTests",
-            dependencies: ["Publish", "PublishCLICore"]
+            dependencies: ["Publish"]
         )
     ]
 )
